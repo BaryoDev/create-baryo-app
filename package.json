@@ -1,0 +1,28 @@
+{
+  "name": "create-baryo-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "create-baryo-app": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MPL-2.0",
+  "type": "module",
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "chalk": "^5.6.2",
+    "clack": "^0.1.0",
+    "commander": "^14.0.2",
+    "degit": "^2.8.4",
+    "execa": "^9.6.1",
+    "fs-extra": "^11.3.3",
+    "gradient-string": "^3.0.0",
+    "ora": "^9.0.0"
+  }
+}
