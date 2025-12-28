@@ -53,6 +53,19 @@ Your `.cursorrules` uses the **Baryo Skills Lite** catalog (saving >80% tokens),
 ./scripts/get-skill.sh baryo-security
 ```
 
+## 🛡️ Safety & Security
+
+**Zero Automated Contributions.**
+The BaryoDev ecosystem follows a strict "Safety First" policy. While the **baryo-learning** skill allows the AI to suggest improvements to the global skills library, **no automated pull requests or pushes** will ever be made to community repositories without your explicit, manual approval.
+
+The process is always:
+1. AI identifies an improvement or fix.
+2. AI drafts the proposal locally in `.baryo/skill-proposals/`.
+3. AI presents the changes for your review.
+4. **You** provide the final confirmation before any PR is created.
+
+---
+
 ## 📜 License
 
 This project is licensed under the **Mozilla Public License 2.0 (MPL-2.0)** - see the [LICENSE](LICENSE) file for details.
