@@ -1,7 +1,7 @@
 {
   "name": "create-baryo-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Interactive CLI to scaffold enterprise-grade, performance-first projects with the BaryoDev Standards",
   "main": "index.js",
   "bin": {
     "create-baryo-app": "./index.js"
@@ -10,9 +10,30 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cli",
+    "scaffold",
+    "scaffolding",
+    "template",
+    "boilerplate",
+    "baryo",
+    "baryodev",
+    "create-app",
+    "project-generator",
+    "starter-kit",
+    "enterprise",
+    "performance"
+  ],
+  "author": "BaryoDev",
   "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaryoDev/create-baryo-app.git"
+  },
+  "homepage": "https://github.com/BaryoDev/create-baryo-app#readme",
+  "bugs": {
+    "url": "https://github.com/BaryoDev/create-baryo-app/issues"
+  },
   "type": "module",
   "dependencies": {
     "@clack/prompts": "^0.11.0",
