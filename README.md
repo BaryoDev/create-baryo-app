@@ -14,6 +14,7 @@ With a single command, you get a "Startup in a Box" that follows the **BaryoDev 
 - **Zero-Dependency Core**: Lightweight and fast.
 - **Vertical Slice Architecture**: Ready for scale.
 - **Smart AI Loading**: Integrated with the 19-skill BaryoDev Enterprise Suite.
+- **Intelligence Compression**: Build-in `npm run compact` to manage long-term project memory.
 - **VitePress Ready**: Documentation structure pre-configured.
 
 ## 🛠️ Usage
