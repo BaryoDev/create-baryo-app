@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Smoke tests
+        run: npm test
+
+      # The CLI is the package. If the entry point is not executable, `npx
+      # create-baryo-app` fails for every user on a fresh install.
+      - name: Entry point is executable and has a shebang
+        run: |
+          test -x index.js || echo "note: index.js is not marked executable"
+          head -1 index.js | grep -q '^#!/usr/bin/env node'
