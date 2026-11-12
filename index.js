@@ -13,6 +13,7 @@ import chalk from 'chalk';
 import gradient from 'gradient-string';
 import fs from 'fs-extra';
 import path from 'path';
+import { validateName, prepareTarget } from './lib/target.js';
 
 const baryoGradient = gradient(['#667eea', '#764ba2', '#6b8dd6']);
 
@@ -23,9 +24,7 @@ async function main() {
     const projectName = await text({
         message: 'What is your project named?',
         placeholder: 'my-baryo-app',
-        validate(value) {
-            if (value.length === 0) return `Name is required!`;
-        },
+        validate: validateName,
     });
 
     if (isCancel(projectName)) {
@@ -56,10 +55,17 @@ async function main() {
     const s = spinner();
     const targetDir = path.resolve(process.cwd(), projectName);
 
-    if (fs.existsSync(targetDir)) {
-        s.start('Cleaning up target directory');
-        fs.removeSync(targetDir);
-        s.stop('Directory cleaned');
+    const canUse = await prepareTarget(targetDir, async (dir) => {
+        const answer = await confirm({
+            message: `${dir} already exists and is not empty. Delete it and continue?`,
+            initialValue: false,
+        });
+        return isCancel(answer) ? false : answer;
+    });
+
+    if (!canUse) {
+        cancel('Target directory left untouched');
+        process.exit(0);
     }
 
     s.start('🏘️  Fetching BaryoDev template...');
