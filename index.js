@@ -55,17 +55,9 @@ async function main() {
     const s = spinner();
     const targetDir = path.resolve(process.cwd(), projectName);
 
-    const canUse = await prepareTarget(targetDir, async (dir) => {
-        const answer = await confirm({
-            message: `${dir} already exists and is not empty. Delete it and continue?`,
-            initialValue: false,
-        });
-        return isCancel(answer) ? false : answer;
-    });
-
-    if (!canUse) {
-        cancel('Target directory left untouched');
-        process.exit(0);
+    if (!prepareTarget(targetDir, process.argv.includes('--force'))) {
+        cancel(`${targetDir} already exists and is not empty. Pass --force to delete it and continue.`);
+        process.exit(1);
     }
 
     s.start('🏘️  Fetching BaryoDev template...');

@@ -16,27 +16,39 @@ function tmp() {
     return fs.mkdtempSync(path.join(os.tmpdir(), 'cba-'));
 }
 
-test('a non-empty existing dir is kept when not confirmed', async () => {
+test('a non-empty existing dir is kept without force', () => {
     const dir = tmp();
     fs.writeFileSync(path.join(dir, 'keep.txt'), 'x');
-    assert.equal(await prepareTarget(dir, async () => false), false);
+    assert.equal(prepareTarget(dir, false), false);
+    assert.equal(prepareTarget(dir, undefined), false);
     assert.ok(fs.existsSync(path.join(dir, 'keep.txt')));
     fs.rmSync(dir, { recursive: true });
 });
 
-test('a non-empty existing dir is removed only when confirmed', async () => {
+test('a non-empty existing dir is removed only with force', () => {
     const dir = tmp();
     fs.writeFileSync(path.join(dir, 'keep.txt'), 'x');
-    assert.equal(await prepareTarget(dir, async () => true), true);
+    assert.equal(prepareTarget(dir, true), true);
     assert.equal(fs.existsSync(dir), false);
 });
 
-test('an empty dir is used without asking', async () => {
+test('an empty dir is used without force', () => {
     const dir = tmp();
     assert.equal(targetState(dir), 'empty');
-    let asked = false;
-    assert.equal(await prepareTarget(dir, async () => { asked = true; return false; }), true);
-    assert.equal(asked, false);
+    assert.equal(prepareTarget(dir, false), true);
     assert.ok(fs.existsSync(dir));
     fs.rmSync(dir, { recursive: true });
+});
+
+test('a symlink to an empty dir is occupied and force removes only the link', () => {
+    const real = tmp();
+    const link = path.join(tmp(), 'link');
+    fs.symlinkSync(real, link);
+    assert.equal(targetState(link), 'occupied');
+    assert.equal(prepareTarget(link, false), false);
+    assert.ok(fs.lstatSync(link).isSymbolicLink());
+    assert.equal(prepareTarget(link, true), true);
+    assert.throws(() => fs.lstatSync(link));
+    assert.ok(fs.existsSync(real));
+    fs.rmSync(real, { recursive: true });
 });
