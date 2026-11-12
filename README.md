@@ -25,7 +25,7 @@ No installation required! Just run it directly using `npx`:
 npx create-baryo-app@latest [project-name] [--force]
 ```
 
-An existing non-empty target directory is never touched unless you pass `--force`.
+If you pass `[project-name]`, the name prompt is skipped. An existing non-empty target directory is never touched unless you pass `--force`.
 
 ### What happens during initialization?
 

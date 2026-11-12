@@ -14,6 +14,7 @@ import gradient from 'gradient-string';
 import fs from 'fs-extra';
 import path from 'path';
 import { validateName, prepareTarget } from './lib/target.js';
+import { positionalName, orCancel } from './lib/cli.js';
 
 const baryoGradient = gradient(['#667eea', '#764ba2', '#6b8dd6']);
 
@@ -21,21 +22,27 @@ async function main() {
     console.clear();
     intro(baryoGradient(' 🏘️  BaryoDev: create-baryo-app '));
 
-    const projectName = await text({
-        message: 'What is your project named?',
-        placeholder: 'my-baryo-app',
-        validate: validateName,
-    });
+    const cancelOpts = { isCancel, cancel, exit: (code) => process.exit(code) };
 
-    if (isCancel(projectName)) {
-        cancel('Operation cancelled');
-        process.exit(0);
+    let projectName = positionalName(process.argv.slice(2));
+    if (projectName !== undefined) {
+        const problem = validateName(projectName);
+        if (problem) {
+            cancel(problem);
+            process.exit(1);
+        }
+    } else {
+        projectName = orCancel(await text({
+            message: 'What is your project named?',
+            placeholder: 'my-baryo-app',
+            validate: validateName,
+        }), cancelOpts);
     }
 
-    const projectDesc = await text({
+    const projectDesc = orCancel(await text({
         message: 'Give it a short description:',
         placeholder: 'A next-gen project from the Baryo',
-    });
+    }), cancelOpts);
 
     const projectType = await select({
         message: 'What kind of project is this?',
@@ -47,10 +54,7 @@ async function main() {
         ],
     });
 
-    if (isCancel(projectType)) {
-        cancel('Operation cancelled');
-        process.exit(0);
-    }
+    orCancel(projectType, cancelOpts);
 
     const s = spinner();
     const targetDir = path.resolve(process.cwd(), projectName);
@@ -115,17 +119,17 @@ async function main() {
     const readmePath = path.join(targetDir, 'README.md');
     if (fs.existsSync(readmePath)) {
         let readme = fs.readFileSync(readmePath, 'utf8');
-        readme = readme.replace(/BaryoDev Project Template/g, projectName);
-        readme = readme.replace(/A universal project template/g, projectDesc);
+        readme = readme.replace(/BaryoDev Project Template/g, () => projectName);
+        readme = readme.replace(/A universal project template/g, () => projectDesc);
         fs.writeFileSync(readmePath, readme);
     }
 
     s.stop('Project tailored!');
 
-    const shouldInstall = await confirm({
+    const shouldInstall = orCancel(await confirm({
         message: 'Install dependencies?',
         initialValue: true,
-    });
+    }), cancelOpts);
 
     if (shouldInstall) {
         s.start('📦 Installing dependencies (npm install)...');
@@ -154,4 +158,7 @@ async function main() {
     console.log(`  ${chalk.cyan('npm run docs:dev')}\n`);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});
