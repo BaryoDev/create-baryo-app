@@ -35,5 +35,9 @@ jobs:
       # create-baryo-app` fails for every user on a fresh install.
       - name: Entry point is executable and has a shebang
         run: |
-          test -x index.js || echo "note: index.js is not marked executable"
+          mode=$(git ls-files -s index.js | cut -d' ' -f1)
+          if [ "$mode" != "100755" ]; then
+            echo "index.js mode in git is '$mode', expected 100755"
+            exit 1
+          fi
           head -1 index.js | grep -q '^#!/usr/bin/env node'
