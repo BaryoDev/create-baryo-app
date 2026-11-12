@@ -52,3 +52,13 @@ test('a symlink to an empty dir is occupied and force removes only the link', ()
     assert.ok(fs.existsSync(real));
     fs.rmSync(real, { recursive: true });
 });
+
+test('drive-relative and colon names are rejected and cannot escape cwd on Windows', () => {
+    for (const name of ['C:', 'C:foo', 'c:', 'a:b', 'x\u0000y']) {
+        assert.ok(validateName(name), `"${name}" should be rejected`);
+    }
+    // Why: on Windows these resolve against another drive's cwd, outside the project directory.
+    assert.notEqual(path.win32.dirname(path.win32.resolve('D:\\work', 'C:foo')), 'D:\\work');
+    assert.equal(path.win32.dirname(path.win32.resolve('D:\\work', 'my-app')), 'D:\\work');
+    assert.equal(validateName('my-app'), undefined);
+});
