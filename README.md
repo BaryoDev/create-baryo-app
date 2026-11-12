@@ -22,8 +22,10 @@ With a single command, you get a "Startup in a Box" that follows the **BaryoDev 
 No installation required! Just run it directly using `npx`:
 
 ```bash
-npx create-baryo-app@latest [project-name]
+npx create-baryo-app@latest [project-name] [--force]
 ```
+
+An existing non-empty target directory is never touched unless you pass `--force`.
 
 ### What happens during initialization?
 
